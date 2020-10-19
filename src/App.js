@@ -1,19 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import client from 'client';
+import React from 'react';
+import {Redirect, Route, Switch} from 'react-router-dom';
+import Loadable from 'react-loadable';
+import TopBarProgress from 'react-topbar-progress-indicator';
+// import Layout from 'components/layout'
+
+/* webpackChunkName: "Checkout" */
+const Checkout = Loadable({
+  loader: () => import('./views/checkout'),
+  loading: TopBarProgress,
+});
 
 const App = () => {
-  const [message, setMessage] = useState(undefined);
-
-  useEffect(() => {
-    (async () => {
-      const {data, error} = await client.get('/');
-
-      if (error) setMessage(error.toString());
-      else setMessage(data);
-    })();
-  }, []);
-
-  return <div>{message}</div>;
+  return (
+    <Switch>
+      <Route exact path="/checkout" component={Checkout} />
+      <Redirect to="/checkout" />
+    </Switch>
+  );
 };
 
 export default App;
