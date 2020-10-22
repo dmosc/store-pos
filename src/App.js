@@ -10,10 +10,16 @@ const Checkout = Loadable({
   loading: TopBarProgress,
 });
 
+const Distribuidores = Loadable({
+  loader: () => import('./views/distribuidores'),
+  loading: TopBarProgress,
+});
+
 const App = () => {
   return (
     <Switch>
       <Route exact path="/checkout" component={Checkout} />
+      <Route exact path="/distribuidores" component={Distribuidores} />
       <Redirect to="/checkout" />
     </Switch>
   );

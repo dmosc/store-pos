@@ -1,7 +1,7 @@
 const productsList = [
   {
     name: 'Nombre producto',
-    description: 'Esta es la descripción de un producto',
+    description: 'SKU:56789',
     image: 'https://picsum.photos/200',
     price: 145.55,
     unit: 'piece',
@@ -10,7 +10,7 @@ const productsList = [
   },
   {
     name: 'Nombre producto',
-    description: 'Esta es la descripción de un producto',
+    description: 'SKU:56789',
     image: 'https://picsum.photos/200',
     price: 145.55,
     unit: 'piece',
@@ -19,7 +19,7 @@ const productsList = [
   },
   {
     name: 'Nombre producto',
-    description: 'Esta es la descripción de un producto',
+    description: 'SKU:56789',
     image: 'https://picsum.photos/200',
     price: 145.55,
     unit: 'piece',
@@ -28,7 +28,7 @@ const productsList = [
   },
   {
     name: 'Nombre producto',
-    description: 'Esta es la descripción de un producto',
+    description: 'SKU:56789',
     image: 'https://picsum.photos/200',
     price: 145.55,
     unit: 'piece',
@@ -37,7 +37,7 @@ const productsList = [
   },
   {
     name: 'Nombre producto',
-    description: 'Esta es la descripción de un producto',
+    description: 'SKU:56789',
     image: 'https://picsum.photos/200',
     price: 145.55,
     unit: 'piece',
@@ -46,7 +46,7 @@ const productsList = [
   },
   {
     name: 'Nombre producto',
-    description: 'Esta es la descripción de un producto',
+    description: 'SKU:56789',
     image: 'https://picsum.photos/200',
     price: 145.55,
     unit: 'piece',
@@ -55,7 +55,7 @@ const productsList = [
   },
   {
     name: 'Nombre producto',
-    description: 'Esta es la descripción de un producto',
+    description: 'SKU:56789',
     image: 'https://picsum.photos/200',
     price: 145.55,
     unit: 'piece',

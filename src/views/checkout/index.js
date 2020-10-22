@@ -25,6 +25,7 @@ import {
   RowContainer,
 } from './elements';
 import {categories, productsList} from './demo-data';
+import '../../index.css';
 
 const {Title, Text} = Typography;
 const {Search} = Input;
@@ -89,7 +90,7 @@ const Checkout = () => {
                             justifyContent: 'space-between',
                           }}
                         >
-                          <Text>{product.name}</Text>
+                          <Text style={{fontSize: '15px'}}>{product.name}</Text>
                           <div
                             style={{
                               display: 'flex',
