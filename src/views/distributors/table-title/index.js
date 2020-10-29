@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {PlusOutlined} from '@ant-design/icons';
-import {Input, Typography, Button} from 'antd';
+import {Button, Input, Typography} from 'antd';
 import {TitleContainer} from './elements';
 
 const {Title} = Typography;

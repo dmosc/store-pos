@@ -3,7 +3,7 @@ import shortid from 'shortid';
 import {distribuidoresList} from './demo-data';
 import moment from 'moment';
 import {EditOutlined} from '@ant-design/icons';
-import {Table, Tag, Card, Col, Row, Typography, Tooltip, Button} from 'antd';
+import {Button, Card, Col, Row, Table, Tag, Tooltip, Typography} from 'antd';
 import TitleTable from './table-title';
 import {Container} from './elements';
 

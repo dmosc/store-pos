@@ -1,114 +1,105 @@
-import React from 'react';
-import {
-  List,
-  Avatar,
-  Card,
-  Col,
-  Row,
-  Typography,
-  Button,
-  Input,
-  Select,
-} from 'antd';
-import {
-  MailOutlined,
-  CreditCardOutlined,
-  PlusOutlined,
-  MinusOutlined,
-  RedditOutlined,
-  DollarOutlined,
-} from '@ant-design/icons';
-import {
-  FiltersContainer,
-  PaymentMethodsContainer,
-  ProductsListContainer,
-  RowContainer,
-} from './elements';
-import {categories, productsList} from './demo-data';
-import '../../index.css';
+import React, {useEffect, useState} from 'react';
+import {useDebounce} from 'use-debounce';
+import {Breadcrumb, Card, Col, Row, Typography} from 'antd';
+import {categoriesList, productsList} from './demo-data';
+import Filters from './components/filters';
+import Products from './components/products';
+import CheckoutCart from './components/checkout-cart';
+import {TAX} from 'utils/constants';
+import {fixDecimals} from 'utils/functions';
 
-const {Title, Text} = Typography;
-const {Search} = Input;
-const {Meta} = Card;
-const {Option} = Select;
+const {Title} = Typography;
 
 const Checkout = () => {
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [cart, setCart] = useState([]);
+  const [cartSummary, setCartSummary] = useState({
+    subtotal: 0,
+    discounts: 0,
+    tax: 0,
+    total: 0,
+  });
+  const [filters, setFilters] = useState({search: '', category: undefined});
+  const debouncedFilters = useDebounce(filters, 1000);
+
+  useEffect(() => {
+    // Fetch available categories for store.
+    setCategories(categoriesList); // This is the mocked data.
+  }, []);
+
+  useEffect(() => {
+    // Fetch available products for store.
+    // Use variable debouncedFilters to delay request.
+    setProducts(productsList); // This is the mocked data.
+  }, [debouncedFilters]);
+
+  useEffect(() => {
+    let subtotal = 0;
+    let discounts = 0;
+    let tax = 0;
+    let total = 0;
+    if (cart.length !== 0) {
+      for (const {product, units} of cart) {
+        subtotal += product.price * units;
+        discounts +=
+          (product.hasDiscount ? product.price * product.hasDiscount : 0) *
+          units;
+      }
+
+      subtotal = fixDecimals(subtotal);
+      discounts = fixDecimals(discounts);
+      tax = fixDecimals((subtotal - discounts) * TAX);
+      total = fixDecimals(subtotal - discounts + tax);
+    }
+
+    setCartSummary({subtotal, discounts, tax, total});
+  }, [cart]);
+
+  const addProductToCart = (productToSet) => {
+    let cartToSet;
+    if (cart.some(({product}) => product.id === productToSet.id)) {
+      cartToSet = cart.map(({product, units}) => {
+        if (product.id === productToSet.id) return {product, units: units + 1};
+        else return {product, units};
+      });
+    } else {
+      cartToSet = [{product: productToSet, units: 1}, ...cart];
+    }
+
+    setCart(cartToSet);
+  };
+
+  const modifyProductUnits = (productId, amount) => {
+    const cartToSet = [];
+    for (const {product, units} of cart) {
+      if (product.id === productId) {
+        if (units + amount > 0)
+          cartToSet.push({product, units: units + amount});
+      } else {
+        cartToSet.push({product, units});
+      }
+    }
+
+    setCart(cartToSet);
+  };
+
   return (
     <Row>
       <Col span={16} style={{padding: 10}}>
-        <Row style={{height: '10vh', marginBottom: 20}}>
-          <Card style={{width: '100%'}}>
-            <div
-              style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Avatar shape="square" size="large" icon={<RedditOutlined />} />
-              <div style={{display: 'flex', flexDirection: 'column'}}>
-                <Text strong>{`Dinero en caja: $100`}</Text>
-                <Text strong>{`Transacciones del día: 15`}</Text>
-              </div>
-            </div>
-          </Card>
+        <Breadcrumb>
+          <Breadcrumb.Item>Menú</Breadcrumb.Item>
+          <Breadcrumb.Item>Tienda</Breadcrumb.Item>
+        </Breadcrumb>
+        <Row style={{height: '6vh', marginBottom: 10}}>
+          <Filters
+            filters={filters}
+            setFilters={setFilters}
+            categories={categories}
+          />
         </Row>
-        <Row style={{marginBottom: 10, height: '70vh'}}>
-          <Card style={{width: '100%', height: '100%', overflow: 'scroll'}}>
-            <FiltersContainer>
-              <Select
-                mode="tags"
-                style={{width: '50%'}}
-                placeholder="Filtrar por categoría"
-                allowClear
-              >
-                {categories.map((category) => (
-                  <Option key={category}>{category}</Option>
-                ))}
-              </Select>
-              <Search placeholder="Buscar producto" style={{width: '50%'}} />
-            </FiltersContainer>
-            <ProductsListContainer>
-              {productsList &&
-                productsList.map((product) => (
-                  <Card
-                    key={product.id}
-                    cover={
-                      <img
-                        alt={product.name}
-                        src={product.image}
-                        height={100}
-                      />
-                    }
-                  >
-                    <Meta
-                      title={
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            justifyContent: 'space-between',
-                          }}
-                        >
-                          <Text style={{fontSize: '15px'}}>{product.name}</Text>
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              justifyContent: 'flex-start',
-                            }}
-                          >
-                            <Text>{`$${product.price}`}</Text>
-                            <Text disabled>{`x ${product.unit}`}</Text>
-                          </div>
-                        </div>
-                      }
-                      description={product.description}
-                    />
-                  </Card>
-                ))}
-            </ProductsListContainer>
-          </Card>
+        <Row style={{marginBottom: 10, height: '72vh'}}>
+          <Products products={products} addProductToCart={addProductToCart} />
         </Row>
         <Row gutter={[15, 15]} style={{height: '15vh'}}>
           <Col span={12}>
@@ -128,91 +119,12 @@ const Checkout = () => {
         </Row>
       </Col>
       <Col span={8} style={{height: '100vh'}}>
-        <Card title="Carrito" style={{height: '100%'}}>
-          <div
-            style={{
-              height: '85vh',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-            }}
-          >
-            <List
-              style={{height: '50vh', overflow: 'scroll', marginBottom: 30}}
-              dataSource={productsList}
-              renderItem={(product) => (
-                <List.Item
-                  key={product.id}
-                  actions={[
-                    <Button
-                      key={1}
-                      type="danger"
-                      icon={<MinusOutlined style={{color: '#FFFFFF'}} />}
-                    />,
-                    <Button
-                      key={1}
-                      type="primary"
-                      icon={<PlusOutlined style={{color: '#FFFFFF'}} />}
-                    />,
-                  ]}
-                >
-                  <List.Item.Meta
-                    title={product.name}
-                    description={
-                      <div style={{display: 'flex', flexDirection: 'column'}}>
-                        <Text disabled>{product.description}</Text>
-                        <Text>x2 = 340</Text>
-                      </div>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
-            <Card>
-              <RowContainer>
-                <Title level={5}>Subtotal</Title>
-                <Text>$100</Text>
-              </RowContainer>
-              <RowContainer>
-                <Title level={5}>Descuentos</Title>
-                <Text>$100</Text>
-              </RowContainer>
-              <RowContainer>
-                <Title level={5}>I.V.A</Title>
-                <Text>$100</Text>
-              </RowContainer>
-              <RowContainer>
-                <Title level={4}>Total</Title>
-                <Text strong>$100</Text>
-              </RowContainer>
-              <Input
-                style={{marginTop: 10}}
-                prefix={<MailOutlined />}
-                placeholder="Email o nombre de usuario"
-              />
-              <PaymentMethodsContainer>
-                <Button
-                  style={{
-                    width: '100%',
-                    marginLeft: 0,
-                    background: 'orange',
-                    borderColor: 'orange',
-                  }}
-                  icon={<CreditCardOutlined style={{color: '#FFFFFF'}} />}
-                />
-                <Button
-                  style={{
-                    width: '100%',
-                    marginRight: 0,
-                    background: 'green',
-                    borderColor: 'green',
-                  }}
-                  icon={<DollarOutlined style={{color: '#FFFFFF'}} />}
-                />
-              </PaymentMethodsContainer>
-            </Card>
-          </div>
-        </Card>
+        <CheckoutCart
+          cart={cart}
+          cartSummary={cartSummary}
+          setCart={setCart}
+          modifyProductUnits={modifyProductUnits}
+        />
       </Col>
     </Row>
   );
