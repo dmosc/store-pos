@@ -45,7 +45,7 @@ const AddProduct = () => {
 
 const CheckoutCart = ({cart, cartSummary, setCart, modifyProductUnits}) => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-
+  const [client, setClient] = useState('');
   const deleteCart = () => {
     confirm({
       title: `¿Estás seguro de que deseas eliminar el contenido del carrito?`,
@@ -128,6 +128,7 @@ const CheckoutCart = ({cart, cartSummary, setCart, modifyProductUnits}) => {
             style={{marginTop: 10}}
             prefix={<PhoneOutlined />}
             placeholder="Celular del cliente"
+            onChange={({target: {value}}) => setClient(value)}
           />
           <Button
             type="primary"
@@ -141,6 +142,9 @@ const CheckoutCart = ({cart, cartSummary, setCart, modifyProductUnits}) => {
         </Card>
       </CheckoutCartContainer>
       <PaymentModal
+        cart={cart}
+        setClient={setClient}
+        client={client}
         cartSummary={cartSummary}
         showPaymentModal={showPaymentModal}
         setCart={setCart}

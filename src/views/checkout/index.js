@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {useDebounce} from 'use-debounce';
 import {Breadcrumb, Card, Col, Row, Typography} from 'antd';
-import {categoriesList, productsList} from './demo-data';
+import {connect} from 'react-redux';
+import {firestoreConnect} from 'react-redux-firebase';
+import {compose} from 'redux';
+import PropTypes from 'prop-types';
+import {categoriesList} from './demo-data';
 import Filters from './components/filters';
 import Products from './components/products';
 import CheckoutCart from './components/checkout-cart';
@@ -10,8 +14,8 @@ import {fixDecimals} from 'utils/functions';
 
 const {Title} = Typography;
 
-const Checkout = () => {
-  const [products, setProducts] = useState([]);
+const Checkout = ({products}) => {
+  // const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState([]);
   const [cartSummary, setCartSummary] = useState({
@@ -20,7 +24,7 @@ const Checkout = () => {
     tax: 0,
     total: 0,
   });
-  const [filters, setFilters] = useState({search: '', category: undefined});
+  const [filters, setFilters] = useState({search: '', category: 'Todo'});
   const debouncedFilters = useDebounce(filters, 1000);
 
   useEffect(() => {
@@ -31,7 +35,7 @@ const Checkout = () => {
   useEffect(() => {
     // Fetch available products for store.
     // Use variable debouncedFilters to delay request.
-    setProducts(productsList); // This is the mocked data.
+    // setProducts(products); // This is the mocked data.
   }, [debouncedFilters]);
 
   useEffect(() => {
@@ -84,6 +88,9 @@ const Checkout = () => {
     setCart(cartToSet);
   };
 
+  if (products === undefined) {
+    return null;
+  }
   return (
     <Row>
       <Col span={16} style={{padding: 10}}>
@@ -99,7 +106,11 @@ const Checkout = () => {
           />
         </Row>
         <Row style={{marginBottom: 10, height: '72vh'}}>
-          <Products products={products} addProductToCart={addProductToCart} />
+          <Products
+            products={products}
+            addProductToCart={addProductToCart}
+            filters={filters}
+          />
         </Row>
         <Row gutter={[15, 15]} style={{height: '15vh'}}>
           <Col span={12}>
@@ -130,4 +141,27 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+Checkout.propTypes = {
+  products: PropTypes.array,
+};
+
+const mapStateToProps = (state) => {
+  return {
+    products: state.firestore.ordered.Productos,
+    profile: state.firebase.profile,
+  };
+};
+
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect((props) => {
+    // if (props.profile.userID === undefined) return [];
+
+    return [
+      {
+        collection: 'Productos',
+        where: ['companyID', '==', 'prueba'],
+      },
+    ];
+  }),
+)(Checkout);

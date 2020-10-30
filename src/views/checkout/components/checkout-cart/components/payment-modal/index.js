@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, InputNumber, Modal} from 'antd';
 import {fixDecimals} from 'utils/functions';
+import {connect} from 'react-redux';
+import {createOrder} from '../../../../../../redux/Actions/dashActions';
 import PropTypes from 'prop-types';
 
 const {confirm} = Modal;
@@ -10,6 +12,10 @@ const PaymentModal = ({
   showPaymentModal,
   setCart,
   setShowPaymentModal,
+  createOrder,
+  cart,
+  client,
+  setClient,
 }) => {
   const [payment, setPayment] = useState({cash: 0, card: 0});
   const [balance, setBalance] = useState(cartSummary.total || 0);
@@ -27,14 +33,15 @@ const PaymentModal = ({
       cancelText: 'Cancelar',
       onOk: async () => {
         // Register transaction...
+        createOrder(cartSummary, cart, client);
         setCart([]);
+        setClient('');
         setShowPaymentModal(false);
         setPayment({cash: 0, card: 0});
       },
       onCancel: () => {},
     });
   };
-
   const balanceToDisplay = balance < 0 ? `(${Math.abs(balance)})` : balance;
 
   return (
@@ -88,6 +95,17 @@ PaymentModal.propTypes = {
   showPaymentModal: PropTypes.bool.isRequired,
   setCart: PropTypes.func.isRequired,
   setShowPaymentModal: PropTypes.func.isRequired,
+  createOrder: PropTypes.func.isRequired,
+  cart: PropTypes.array.isRequired,
+  client: PropTypes.string.isRequired,
+  setClient: PropTypes.func.isRequired,
 };
 
-export default PaymentModal;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    createOrder: (summary, cart, client) =>
+      dispatch(createOrder(summary, cart, client)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(PaymentModal);

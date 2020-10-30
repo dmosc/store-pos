@@ -4,10 +4,13 @@ import {BrowserRouter as Router} from 'react-router-dom';
 import 'antd/dist/antd.css';
 import './index.css';
 import App from './App';
+import ReduxWrapper from './redux';
 
 ReactDOM.render(
-  <Router basename="/">
-    <App />
-  </Router>,
+  <ReduxWrapper>
+    <Router basename="/">
+      <App />
+    </Router>
+  </ReduxWrapper>,
   document.getElementById('root'),
 );

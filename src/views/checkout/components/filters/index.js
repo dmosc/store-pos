@@ -16,10 +16,10 @@ const Filters = ({filters, setFilters, categories}) => {
           placeholder="Filtrar por categoría"
           allowClear
           onSelect={(category) => setFilters({...filters, category})}
-          onClear={() => setFilters({...filters, category: undefined})}
+          onClear={() => setFilters({...filters, category: 'Todo'})}
         >
           {categories.map((category) => (
-            <Option key={category.id} value={category.id}>
+            <Option key={category.id} value={category.name}>
               {category.name}
             </Option>
           ))}

@@ -26,7 +26,7 @@ const productsList = [
     price: 145.55,
     unit: 'piece',
     inventory: 45,
-    hasDiscount: undefined,
+    hasDiscount: 0,
     id: 3,
   },
   {
@@ -36,7 +36,7 @@ const productsList = [
     price: 145.55,
     unit: 'piece',
     inventory: 45,
-    hasDiscount: undefined,
+    hasDiscount: 0,
     id: 4,
   },
   {
@@ -46,7 +46,7 @@ const productsList = [
     price: 145.55,
     unit: 'piece',
     inventory: 45,
-    hasDiscount: undefined,
+    hasDiscount: 0,
     id: 5,
   },
   {
@@ -56,7 +56,7 @@ const productsList = [
     price: 145.55,
     unit: 'piece',
     inventory: 45,
-    hasDiscount: undefined,
+    hasDiscount: 0,
     id: 6,
   },
   {
@@ -66,7 +66,7 @@ const productsList = [
     price: 145.55,
     unit: 'piece',
     inventory: 45,
-    hasDiscount: undefined,
+    hasDiscount: 0,
     id: 7,
   },
   {
@@ -76,7 +76,7 @@ const productsList = [
     price: 145.55,
     unit: 'piece',
     inventory: 45,
-    hasDiscount: undefined,
+    hasDiscount: 0,
     id: 8,
   },
   {
@@ -86,7 +86,7 @@ const productsList = [
     price: 145.55,
     unit: 'piece',
     inventory: 45,
-    hasDiscount: undefined,
+    hasDiscount: 0,
     id: 9,
   },
   {
@@ -96,7 +96,7 @@ const productsList = [
     price: 145.55,
     unit: 'piece',
     inventory: 45,
-    hasDiscount: undefined,
+    hasDiscount: 0,
     id: 10,
   },
   {
@@ -106,7 +106,7 @@ const productsList = [
     price: 145.55,
     unit: 'piece',
     inventory: 45,
-    hasDiscount: undefined,
+    hasDiscount: 0,
     id: 11,
   },
   {
@@ -116,18 +116,18 @@ const productsList = [
     price: 145.55,
     unit: 'piece',
     inventory: 45,
-    hasDiscount: undefined,
+    hasDiscount: 0,
     id: 12,
   },
 ];
 
 const categoriesList = [
-  {name: 'Zapatos', id: 1},
-  {name: 'Bufandas', id: 2},
-  {name: 'Piel', id: 3},
-  {name: 'Gamusa', id: 4},
-  {name: 'Pantalones', id: 5},
-  {name: 'Mezclilla', id: 6},
+  {name: 'Todo', id: 1},
+  {name: 'Bebida', id: 2},
+  {name: 'Alcohol', id: 3},
+  {name: 'Hamburguesas', id: 4},
+  {name: 'Pizzas', id: 5},
+  {name: 'Botanas', id: 6},
 ];
 
 export {productsList, categoriesList};
