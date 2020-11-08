@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useDebounce} from 'use-debounce';
-import {Breadcrumb, Card, Col, Row, Typography} from 'antd';
+import {Card, Col, Row, Typography} from 'antd';
 import {connect} from 'react-redux';
 import {firestoreConnect} from 'react-redux-firebase';
 import {compose} from 'redux';
@@ -10,13 +10,15 @@ import Filters from './components/filters';
 import Products from './components/products';
 import CheckoutCart from './components/checkout-cart';
 import {TAX} from 'utils/constants';
-import {fixDecimals} from 'utils/functions';
+import {buildBreadcrumb, fixDecimals} from 'utils/functions';
+import {useLocation} from 'react-router-dom';
 
 const {Title} = Typography;
 
 const Checkout = ({products}) => {
   // const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [client, setClient] = useState({debt: 0});
   const [cart, setCart] = useState([]);
   const [cartSummary, setCartSummary] = useState({
     subtotal: 0,
@@ -26,6 +28,7 @@ const Checkout = ({products}) => {
   });
   const [filters, setFilters] = useState({search: '', category: 'Todo'});
   const debouncedFilters = useDebounce(filters, 1000);
+  const location = useLocation();
 
   useEffect(() => {
     // Fetch available categories for store.
@@ -41,8 +44,6 @@ const Checkout = ({products}) => {
   useEffect(() => {
     let subtotal = 0;
     let discounts = 0;
-    let tax = 0;
-    let total = 0;
     if (cart.length !== 0) {
       for (const {product, units} of cart) {
         subtotal += product.price * units;
@@ -50,15 +51,15 @@ const Checkout = ({products}) => {
           (product.hasDiscount ? product.price * product.hasDiscount : 0) *
           units;
       }
-
-      subtotal = fixDecimals(subtotal);
-      discounts = fixDecimals(discounts);
-      tax = fixDecimals((subtotal - discounts) * TAX);
-      total = fixDecimals(subtotal - discounts + tax);
     }
 
+    subtotal = fixDecimals(subtotal);
+    discounts = fixDecimals(discounts);
+    const tax = fixDecimals((subtotal - discounts) * TAX);
+    const total = fixDecimals(subtotal - discounts + tax + client.debt);
+
     setCartSummary({subtotal, discounts, tax, total});
-  }, [cart]);
+  }, [cart, client]);
 
   const addProductToCart = (productToSet) => {
     let cartToSet;
@@ -94,10 +95,7 @@ const Checkout = ({products}) => {
   return (
     <Row>
       <Col span={16} style={{padding: 10}}>
-        <Breadcrumb>
-          <Breadcrumb.Item>Menú</Breadcrumb.Item>
-          <Breadcrumb.Item>Tienda</Breadcrumb.Item>
-        </Breadcrumb>
+        {buildBreadcrumb(['menu', location.pathname.substring(1)])}
         <Row style={{height: '6vh', marginBottom: 10}}>
           <Filters
             filters={filters}
@@ -134,6 +132,8 @@ const Checkout = ({products}) => {
           cart={cart}
           cartSummary={cartSummary}
           setCart={setCart}
+          client={client}
+          setClient={setClient}
           modifyProductUnits={modifyProductUnits}
         />
       </Col>

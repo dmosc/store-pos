@@ -4,7 +4,7 @@ import {ProductsListContainer} from './elements';
 import PropTypes from 'prop-types';
 
 const {Meta} = Card;
-const {Text} = Typography;
+const {Text, Paragraph} = Typography;
 
 const Products = ({products, addProductToCart, filters}) => {
   return (
@@ -19,14 +19,10 @@ const Products = ({products, addProductToCart, filters}) => {
               <Card key={product.id} onClick={() => addProductToCart(product)}>
                 <Meta
                   title={
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <Text style={{fontSize: '15px'}}>{product.name}</Text>
+                    <div>
+                      <Paragraph ellipsis style={{fontSize: '15px'}}>
+                        {product.name}
+                      </Paragraph>
                       <Text>{`$${product.price}`}</Text>
                     </div>
                   }
