@@ -1,4 +1,7 @@
 import styled from 'styled-components';
+import {Typography} from 'antd';
+
+const {Paragraph} = Typography;
 
 const ProductsListContainer = styled.div`
   display: grid;
@@ -7,4 +10,12 @@ const ProductsListContainer = styled.div`
   margin: 0;
 `;
 
-export {ProductsListContainer};
+const ProductName = styled(Paragraph)`
+  font-size: 1em;
+  height: 3em;
+  white-space: normal;
+  word-wrap: break-word;
+  font-weight: bolder;
+`;
+
+export {ProductsListContainer, ProductName};

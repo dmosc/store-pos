@@ -130,4 +130,17 @@ const categoriesList = [
   {name: 'Botanas', id: 6},
 ];
 
-export {productsList, categoriesList};
+const clientMock = {
+  firstName: 'John',
+  lastName: 'Appleseed',
+  cellphone: '1234564167',
+  id: 'ds23456rfg4',
+  debt: 50.45,
+};
+
+const couponMock = {
+  code: '124dsf124',
+  value: 50,
+};
+
+export {productsList, categoriesList, clientMock, couponMock};

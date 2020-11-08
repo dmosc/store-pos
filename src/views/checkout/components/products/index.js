@@ -1,6 +1,6 @@
 import React from 'react';
 import {Card, Typography} from 'antd';
-import {ProductsListContainer} from './elements';
+import {ProductName, ProductsListContainer} from './elements';
 import PropTypes from 'prop-types';
 
 const {Meta} = Card;
@@ -19,14 +19,8 @@ const Products = ({products, addProductToCart, filters}) => {
               <Card key={product.id} onClick={() => addProductToCart(product)}>
                 <Meta
                   title={
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <Text style={{fontSize: '15px'}}>{product.name}</Text>
+                    <div>
+                      <ProductName ellipsis>{product.name}</ProductName>
                       <Text>{`$${product.price}`}</Text>
                     </div>
                   }
@@ -35,6 +29,8 @@ const Products = ({products, addProductToCart, filters}) => {
               </Card>
             );
           }
+
+          return undefined;
         })}
       </ProductsListContainer>
     </Card>
