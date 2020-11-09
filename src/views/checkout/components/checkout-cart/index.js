@@ -118,6 +118,13 @@ const CheckoutCart = ({
     setBalance(fixDecimals(payment.cash + payment.card + payment.coupon));
   }, [payment, cartSummary]);
 
+  const resetCheckout = () => {
+    setCart([]);
+    setClient({debt: 0});
+    setShowPaymentModal(false);
+    setPayment({cash: 0, card: 0, coupon: 0});
+  };
+
   const submitPayment = () => {
     confirm({
       title: `¿Estás seguro de que deseas finalizar la compra?`,
@@ -128,10 +135,7 @@ const CheckoutCart = ({
       onOk: async () => {
         // Register transaction...
         createOrder(cartSummary, cart, client);
-        setCart([]);
-        setClient({debt: 0});
-        setShowPaymentModal(false);
-        setPayment({cash: 0, card: 0, coupon: 0});
+        resetCheckout();
       },
       onCancel: () => {},
     });
@@ -139,16 +143,17 @@ const CheckoutCart = ({
 
   const deleteCart = () => {
     confirm({
-      title: `¿Estás seguro de que deseas eliminar el contenido del carrito?`,
+      title: `¿Estás seguro de que deseas cancelar la compra?`,
       okType: 'danger',
       okText: 'Continuar',
       cancelText: 'Cancelar',
-      onOk: async () => setCart([]),
+      onOk: async () => resetCheckout(),
       onCancel: () => {},
     });
   };
 
   const balanceToDisplay = balance < 0 ? `(${Math.abs(balance)})` : balance;
+
   return (
     <Card
       title={client.firstName ? `Carrito de ${client.firstName}` : 'Carrito'}
@@ -230,8 +235,16 @@ const CheckoutCart = ({
             <Text strong>{`$${cartSummary.total}`}</Text>
           </RowContainer>
           <RowContainer>
-            <Text />
+            <Text disabled>Pagado</Text>
             <Text strong>{`$${balanceToDisplay}`}</Text>
+          </RowContainer>
+          <RowContainer>
+            <Text disabled>Cambio</Text>
+            <Text strong>{`$${
+              balanceToDisplay > cartSummary.total
+                ? fixDecimals(balanceToDisplay - cartSummary.total)
+                : 0
+            }`}</Text>
           </RowContainer>
           <Button
             type="secondary"

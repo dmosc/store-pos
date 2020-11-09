@@ -1,10 +1,10 @@
 import React from 'react';
 import {Card, Typography} from 'antd';
-import {ProductsListContainer} from './elements';
+import {ProductName, ProductsListContainer} from './elements';
 import PropTypes from 'prop-types';
 
 const {Meta} = Card;
-const {Text, Paragraph} = Typography;
+const {Text} = Typography;
 
 const Products = ({products, addProductToCart, filters}) => {
   return (
@@ -20,9 +20,7 @@ const Products = ({products, addProductToCart, filters}) => {
                 <Meta
                   title={
                     <div>
-                      <Paragraph ellipsis style={{fontSize: '15px'}}>
-                        {product.name}
-                      </Paragraph>
+                      <ProductName ellipsis>{product.name}</ProductName>
                       <Text>{`$${product.price}`}</Text>
                     </div>
                   }
@@ -31,6 +29,8 @@ const Products = ({products, addProductToCart, filters}) => {
               </Card>
             );
           }
+
+          return undefined;
         })}
       </ProductsListContainer>
     </Card>

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Input, InputNumber, List, Modal} from 'antd';
+import {Button, Input, InputNumber, List, Modal, Typography} from 'antd';
 import PropTypes from 'prop-types';
 import {
   PaymentMethodContainer,
@@ -10,6 +10,7 @@ import {PAYMENT_METHODS, PAYMENT_TYPES} from 'utils/constants';
 import {couponMock} from '../../../../demo-data';
 
 const {confirm} = Modal;
+const {Text} = Typography;
 
 const PaymentModal = ({
   showPaymentModal,
@@ -96,14 +97,18 @@ const PaymentModal = ({
         renderItem={(method) => (
           <List.Item>
             <PaymentMethodContainer
-              color={
-                !paymentMethod || method.type === paymentMethod
-                  ? method.color
-                  : '#D9D9D9'
-              }
+              selected={!paymentMethod || method.type === paymentMethod}
               onClick={() => setPaymentMethod(method.type)}
             >
-              {method.name}
+              {method.icon({
+                style: {
+                  width: '100%',
+                  fontSize: 'x-large',
+                  marginBottom: 10,
+                  color: method.color,
+                },
+              })}
+              <Text>{method.name}</Text>
             </PaymentMethodContainer>
           </List.Item>
         )}

@@ -47,6 +47,8 @@ const buildBreadcrumb = (locations) => {
             </Breadcrumb.Item>
           );
         }
+
+        return undefined;
       })}
     </Breadcrumb>
   );
