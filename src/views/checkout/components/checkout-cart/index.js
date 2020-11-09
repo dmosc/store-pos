@@ -13,8 +13,8 @@ import {
   RowContainer,
 } from './elements';
 import PaymentModal from './components/payment-modal';
+import firebase from 'firebase';
 import PropTypes from 'prop-types';
-import {clientMock} from '../../demo-data';
 import {fixDecimals} from 'utils/functions';
 import {createOrder} from '../../../../redux/Actions/dashActions';
 import {connect} from 'react-redux';
@@ -22,18 +22,48 @@ import {connect} from 'react-redux';
 const {Text, Title} = Typography;
 const {confirm} = Modal;
 
-const AddProduct = ({setClient}) => {
+const AddProduct = ({setClient, addProductToCart}) => {
   const [SKU, setSKU] = useState(undefined);
   const [cellphone, setCellphone] = useState(undefined);
 
   const getClient = () => {
     // Fetch client info and use setClient to set its info.
-    setClient(clientMock);
+    const db = firebase.firestore();
+    db.collection('Clientes')
+      .where('phone', '==', cellphone)
+      .onSnapshot(function (querySnapshot) {
+        let info;
+        querySnapshot.forEach(function (doc) {
+          info = doc.data();
+        });
+        if (info === undefined) {
+          // eslint-disable-next-line no-console
+          console.log('open pop up');
+        } else {
+          setClient(info);
+        }
+      });
     setCellphone(undefined);
   };
 
   const addProductWithSKU = () => {
     // Fetch product with SKU and add it to cart.
+    const db = firebase.firestore();
+    db.collection('Productos')
+      .where('SKU', '==', SKU)
+      .onSnapshot(function (querySnapshot) {
+        let info;
+        querySnapshot.forEach(function (doc) {
+          info = doc.data();
+        });
+        if (info === undefined) {
+          // eslint-disable-next-line no-console
+          console.log('Error Message, no product with that sku');
+        } else {
+          addProductToCart(info);
+        }
+      });
+    setSKU(undefined);
   };
 
   return (
@@ -78,6 +108,7 @@ const CheckoutCart = ({
   client,
   setClient,
   modifyProductUnits,
+  addProductToCart,
 }) => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [payment, setPayment] = useState({cash: 0, card: 0, coupon: 0});
@@ -118,7 +149,6 @@ const CheckoutCart = ({
   };
 
   const balanceToDisplay = balance < 0 ? `(${Math.abs(balance)})` : balance;
-
   return (
     <Card
       title={client.firstName ? `Carrito de ${client.firstName}` : 'Carrito'}
@@ -134,7 +164,12 @@ const CheckoutCart = ({
     >
       <CheckoutCartContainer>
         <List
-          header={<AddProduct setClient={setClient} />}
+          header={
+            <AddProduct
+              setClient={setClient}
+              addProductToCart={addProductToCart}
+            />
+          }
           style={{height: '50vh', overflow: 'scroll', marginBottom: 30}}
           dataSource={cart}
           renderItem={({product, units}) => (
@@ -236,6 +271,7 @@ const mapDispatchToProps = (dispatch) => {
 
 AddProduct.propTypes = {
   setClient: PropTypes.func.isRequired,
+  addProductToCart: PropTypes.func.isRequired,
 };
 
 CheckoutCart.propTypes = {
@@ -245,6 +281,7 @@ CheckoutCart.propTypes = {
   client: PropTypes.object,
   setClient: PropTypes.func.isRequired,
   modifyProductUnits: PropTypes.func.isRequired,
+  addProductToCart: PropTypes.func.isRequired,
 };
 
 export default connect(null, mapDispatchToProps)(CheckoutCart);

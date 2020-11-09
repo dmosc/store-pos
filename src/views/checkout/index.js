@@ -133,6 +133,7 @@ const Checkout = ({products}) => {
           cartSummary={cartSummary}
           setCart={setCart}
           client={client}
+          addProductToCart={addProductToCart}
           setClient={setClient}
           modifyProductUnits={modifyProductUnits}
         />
