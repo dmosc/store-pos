@@ -8,6 +8,11 @@ const Menu = Loadable({
   loading: TopBarProgress,
 });
 
+const Auth = Loadable({
+  loader: () => import('./views/auth'),
+  loading: TopBarProgress,
+});
+
 const Checkout = Loadable({
   loader: () => import('./views/checkout'),
   loading: TopBarProgress,
@@ -22,6 +27,7 @@ const App = () => {
   return (
     <Switch>
       <Route exact path="/" component={Menu} />
+      <Route path="/auth" component={Auth} />
       <Route exact path="/checkout" component={Checkout} />
       <Route exact path="/distribuidores" component={Distributors} />
       <Redirect to="/" />
