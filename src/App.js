@@ -1,6 +1,7 @@
 import React from 'react';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import Loadable from 'react-loadable';
+import {useSelector} from 'react-redux';
 import TopBarProgress from 'react-topbar-progress-indicator';
 
 const Menu = Loadable({
@@ -33,11 +34,24 @@ const Ordenes = Loadable({
   loading: TopBarProgress,
 });
 
+function AuthIsLoaded() {
+  const auth = useSelector((state) => state.firebase.auth);
+  if (auth.isEmpty) return true;
+  return false;
+}
+
 const App = () => {
+  if (AuthIsLoaded()) {
+    return (
+      <Switch>
+        <Route path="/auth" component={Auth} />
+        <Redirect to="/auth" />
+      </Switch>
+    );
+  }
   return (
     <Switch>
       <Route exact path="/" component={Menu} />
-      <Route path="/auth" component={Auth} />
       <Route exact path="/checkout" component={Checkout} />
       <Route exact path="/productos" component={Productos} />
       <Route exact path="/ordenes" component={Ordenes} />

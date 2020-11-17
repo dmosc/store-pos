@@ -4,6 +4,7 @@ import {
   ShoppingCartOutlined,
   BarcodeOutlined,
   CodeSandboxOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 
@@ -41,6 +42,34 @@ const modules = [
     route: '/ordenes',
     icon: (
       <BarcodeOutlined
+        style={{
+          width: '100%',
+          color: '#097A6C',
+          fontSize: 'xxx-large',
+          marginBottom: 10,
+        }}
+      />
+    ),
+  },
+  {
+    name: 'Clientes (Pendiente)',
+    route: '/clientes',
+    icon: (
+      <TeamOutlined
+        style={{
+          width: '100%',
+          color: '#097A6C',
+          fontSize: 'xxx-large',
+          marginBottom: 10,
+        }}
+      />
+    ),
+  },
+  {
+    name: 'Usuarios (Pendiente)',
+    route: '/usuarios',
+    icon: (
+      <TeamOutlined
         style={{
           width: '100%',
           color: '#097A6C',

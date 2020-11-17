@@ -1,16 +1,21 @@
 import React, {useState} from 'react';
+import firebase from 'firebase';
 import {Button, Form, Input} from 'antd';
 import {LockOutlined, LoginOutlined, UserOutlined} from '@ant-design/icons';
 
 const Login = () => {
-  const [loading, setLoading] = useState(false);
   const [usernameOrEmail, setUsernameOrEmail] = useState(undefined);
   const [password, setPassword] = useState(undefined);
+  const [error, setError] = useState('');
 
   const handleSubmit = () => {
-    setLoading(true);
-    // Fetch user information.
-    setLoading(false);
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(usernameOrEmail, password)
+      .then(() => {})
+      .catch((err) => {
+        setError(err.message);
+      });
   };
 
   return (
@@ -21,7 +26,7 @@ const Login = () => {
         justifyContent: 'center',
         width: '30%',
       }}
-      onSubmit={handleSubmit}
+      onFinish={handleSubmit}
     >
       <Form.Item style={{marginBottom: 20}}>
         <Input
@@ -46,11 +51,9 @@ const Login = () => {
           type="primary"
           htmlType="submit"
           icon={<LoginOutlined style={{color: '#FFFFFF'}} />}
-          loading={loading}
-        >
-          {(loading && 'Espere..') || 'Ingresar'}
-        </Button>
+        ></Button>
       </Form.Item>
+      <div style={{color: 'red', textAlign: 'center'}}>{error}</div>
     </Form>
   );
 };
