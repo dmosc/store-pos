@@ -123,11 +123,17 @@ const productsList = [
 
 const categoriesList = [
   {name: 'Todo', id: 1},
-  {name: 'Bebida', id: 2},
-  {name: 'Alcohol', id: 3},
-  {name: 'Hamburguesas', id: 4},
-  {name: 'Pizzas', id: 5},
+  {name: 'Finger Food', id: 2},
+  {name: 'Dips', id: 3},
+  {name: 'Hummus', id: 4},
+  {name: 'Pastas', id: 5},
   {name: 'Botanas', id: 6},
+  {name: 'Paninis', id: 7},
+  {name: 'Ensaladas Verdes', id: 8},
+  {name: 'Quinoas', id: 9},
+  {name: 'Ensaladas', id: 10},
+  {name: 'Paninis', id: 11},
+  {name: 'Gelatinas de Yogourt', id: 12},
 ];
 
 const clientMock = {

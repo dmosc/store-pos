@@ -1,6 +1,10 @@
 import React from 'react';
 import {ModuleContainer, ModulesList} from './elements';
-import {BarsOutlined, ShoppingCartOutlined} from '@ant-design/icons';
+import {
+  ShoppingCartOutlined,
+  BarcodeOutlined,
+  CodeSandboxOutlined,
+} from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 
 const modules = [
@@ -19,10 +23,24 @@ const modules = [
     ),
   },
   {
-    name: 'Distribuidores',
-    route: '/distribuidores',
+    name: 'Productos',
+    route: '/productos',
     icon: (
-      <BarsOutlined
+      <CodeSandboxOutlined
+        style={{
+          width: '100%',
+          color: '#097A6C',
+          fontSize: 'xxx-large',
+          marginBottom: 10,
+        }}
+      />
+    ),
+  },
+  {
+    name: 'Ordenes',
+    route: '/ordenes',
+    icon: (
+      <BarcodeOutlined
         style={{
           width: '100%',
           color: '#097A6C',

@@ -24,6 +24,7 @@ const PaymentModal = ({
   client,
   resetCheckout,
   cartSummary,
+  newOrder,
 }) => {
   const [balance, setBalance] = useState(cartSummary.total || 0);
   const [paymentMethod, setPaymentMethod] = useState(undefined);
@@ -45,7 +46,7 @@ const PaymentModal = ({
       cancelText: 'Cancelar',
       onOk: async () => {
         // Register transaction...
-        createOrder(cartSummary, cart, client);
+        newOrder(cartSummary, cart, client);
         resetCheckout();
       },
       onCancel: () => {},
@@ -174,7 +175,7 @@ const PaymentModal = ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createOrder: (summary, cart, client) =>
+    newOrder: (summary, cart, client) =>
       dispatch(createOrder(summary, cart, client)),
   };
 };
@@ -188,6 +189,7 @@ PaymentModal.propTypes = {
   client: PropTypes.object.isRequired,
   resetCheckout: PropTypes.func.isRequired,
   cartSummary: PropTypes.object.isRequired,
+  newOrder: PropTypes.func.isRequired,
 };
 
 export default connect(null, mapDispatchToProps)(PaymentModal);
