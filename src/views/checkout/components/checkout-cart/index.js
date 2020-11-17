@@ -16,6 +16,7 @@ import {
 import PaymentModal from './components/payment-modal';
 import firebase from 'firebase';
 import PropTypes from 'prop-types';
+import ClientRegisterModal from './components/client-register-modal';
 
 const {Text, Title} = Typography;
 const {confirm} = Modal;
@@ -24,6 +25,7 @@ const db = firebase.firestore();
 const AddProduct = ({setClient, addProductToCart}) => {
   const [SKU, setSKU] = useState(undefined);
   const [cellphone, setCellphone] = useState(undefined);
+  const [showClientRegisterModal, setShowClientRegisterModal] = useState(false);
 
   const getClient = () => {
     db.collection('Clientes')
@@ -34,13 +36,14 @@ const AddProduct = ({setClient, addProductToCart}) => {
           clientToSet = doc.data();
         });
         if (!clientToSet) {
-          message.error(`El número ${cellphone} no está registrado!`);
+          message.info(`El número ${cellphone} no está registrado!`);
+          setShowClientRegisterModal(true);
         } else {
           message.success(`Bienvenido ${clientToSet.firstName}!`);
           setClient(clientToSet);
+          setCellphone(undefined);
         }
       });
-    setCellphone(undefined);
   };
 
   const addProductWithSKU = () => {
@@ -93,6 +96,13 @@ const AddProduct = ({setClient, addProductToCart}) => {
           disabled={!SKU}
         />
       </AddProductContainer>
+      <ClientRegisterModal
+        showClientRegisterModal={showClientRegisterModal}
+        setShowClientRegisterModal={setShowClientRegisterModal}
+        cellphone={cellphone}
+        setCellphone={setCellphone}
+        setClient={setClient}
+      />
     </>
   );
 };
@@ -141,7 +151,6 @@ const CheckoutCart = ({
           type="danger"
           icon={<DeleteOutlined style={{color: '#FFFFFF'}} />}
           onClick={deleteCart}
-          disabled={cart.length === 0}
         />
       }
     >
