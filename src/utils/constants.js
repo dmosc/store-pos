@@ -3,6 +3,7 @@ import {
   CreditCardOutlined,
   DollarOutlined,
   ScissorOutlined,
+  TagOutlined,
 } from '@ant-design/icons';
 
 const TAX = 0.16;
@@ -11,6 +12,7 @@ const PAYMENT_TYPES = {
   cash: 'cash',
   card: 'card',
   coupon: 'coupon',
+  debt: 'debt',
 };
 
 const PAYMENT_METHODS = [
@@ -34,6 +36,13 @@ const PAYMENT_METHODS = [
     color: '#FF0000',
     // eslint-disable-next-line react/display-name
     icon: (props) => <ScissorOutlined {...props} />,
+  },
+  {
+    name: 'DEUDA',
+    type: PAYMENT_TYPES.debt,
+    color: '#6041D1',
+    // eslint-disable-next-line react/display-name
+    icon: (props) => <TagOutlined {...props} />,
   },
 ];
 

@@ -1,12 +1,15 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Input, InputNumber, List, Modal, Typography} from 'antd';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import {
   PaymentMethodContainer,
   PaymentMethodList,
   PaymentModalFooter,
 } from './elements';
 import {PAYMENT_METHODS, PAYMENT_TYPES} from 'utils/constants';
+import {fixDecimals} from 'utils/functions';
+import {createOrder} from 'redux/Actions/dashActions';
 import {couponMock} from '../../../../demo-data';
 
 const {confirm} = Modal;
@@ -17,11 +20,39 @@ const PaymentModal = ({
   setShowPaymentModal,
   payment,
   setPayment,
+  cart,
+  client,
+  resetCheckout,
+  cartSummary,
 }) => {
+  const [balance, setBalance] = useState(cartSummary.total || 0);
   const [paymentMethod, setPaymentMethod] = useState(undefined);
   const [paymentContent, setPaymentContent] = useState(undefined);
 
+  useEffect(() => {
+    const balanceToSet =
+      cartSummary.total -
+      (payment.cash + payment.card + payment.coupon + payment.debt);
+    setBalance(fixDecimals(balanceToSet));
+  }, [payment, cartSummary]);
+
   const submitPayment = () => {
+    confirm({
+      title: `¿Estás seguro de que deseas finalizar la compra?`,
+      content: 'Una vez finalizada ya no será posible modificarla.',
+      okType: 'danger',
+      okText: 'Continuar',
+      cancelText: 'Cancelar',
+      onOk: async () => {
+        // Register transaction...
+        createOrder(cartSummary, cart, client);
+        resetCheckout();
+      },
+      onCancel: () => {},
+    });
+  };
+
+  const addPayment = () => {
     confirm({
       title: `¿Estás seguro de agergar el pago?`,
       content: 'Una vez agregado, ya no podrá removerse.',
@@ -35,19 +66,31 @@ const PaymentModal = ({
           // paymentContent contains the introduced coupon.
           const coupon = {...couponMock};
           paymentContentToSet = coupon.value;
+        } else if (paymentMethod === PAYMENT_TYPES.debt) {
+          paymentContentToSet = balance;
         }
 
         setPaymentMethod(undefined);
-        setShowPaymentModal(false);
         setPayment({...payment, [paymentMethod]: paymentContentToSet});
       },
       onCancel: () => {},
     });
   };
 
+  const balanceToDisplay = balance < 0 ? `(${Math.abs(balance)})` : balance;
+
   return (
     <Modal
-      title="Seleccionar un método de pago"
+      title={
+        <div
+          style={{display: 'flex', flexDirection: 'column', marginBottom: 0}}
+        >
+          <Text strong>{`${
+            balanceToDisplay >= 0 ? 'Pendiente' : 'Cambio'
+          }: $${balanceToDisplay}`}</Text>
+          <Text disabled>{`Último pago: `}</Text>
+        </div>
+      }
       visible={showPaymentModal}
       onCancel={() => {
         setPaymentMethod(undefined);
@@ -55,6 +98,9 @@ const PaymentModal = ({
       }}
       footer={
         <PaymentModalFooter>
+          {paymentMethod &&
+            paymentMethod === PAYMENT_TYPES.debt &&
+            addPayment()}
           {paymentMethod &&
             (paymentMethod === PAYMENT_TYPES.cash ||
               paymentMethod === PAYMENT_TYPES.card) && (
@@ -76,17 +122,26 @@ const PaymentModal = ({
             />
           )}
           <div>
-            <Button
-              onClick={() => {
-                setPaymentMethod(undefined);
-                setShowPaymentModal(false);
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button disabled={!paymentMethod} onClick={submitPayment}>
-              Continuar
-            </Button>
+            {balance <= 0 && (
+              <Button type="primary" onClick={submitPayment}>
+                Finalizar
+              </Button>
+            )}
+            {balance > 0 && (
+              <>
+                <Button
+                  onClick={() => {
+                    setPaymentMethod(undefined);
+                    setShowPaymentModal(false);
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button disabled={!paymentMethod} onClick={addPayment}>
+                  Continuar
+                </Button>
+              </>
+            )}
           </div>
         </PaymentModalFooter>
       }
@@ -117,11 +172,22 @@ const PaymentModal = ({
   );
 };
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    createOrder: (summary, cart, client) =>
+      dispatch(createOrder(summary, cart, client)),
+  };
+};
+
 PaymentModal.propTypes = {
   showPaymentModal: PropTypes.bool.isRequired,
   setShowPaymentModal: PropTypes.func.isRequired,
   payment: PropTypes.object.isRequired,
   setPayment: PropTypes.func.isRequired,
+  cart: PropTypes.array.isRequired,
+  client: PropTypes.object.isRequired,
+  resetCheckout: PropTypes.func.isRequired,
+  cartSummary: PropTypes.object.isRequired,
 };
 
-export default PaymentModal;
+export default connect(null, mapDispatchToProps)(PaymentModal);

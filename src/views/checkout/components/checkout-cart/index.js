@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Card, Input, List, Modal, Typography} from 'antd';
+import React, {useState} from 'react';
+import {Button, Card, Input, List, message, Modal, Typography} from 'antd';
 import {
   DeleteOutlined,
+  LoginOutlined,
   MinusOutlined,
   NumberOutlined,
   PhoneOutlined,
@@ -15,52 +16,46 @@ import {
 import PaymentModal from './components/payment-modal';
 import firebase from 'firebase';
 import PropTypes from 'prop-types';
-import {fixDecimals} from 'utils/functions';
-import {createOrder} from '../../../../redux/Actions/dashActions';
-import {connect} from 'react-redux';
 
 const {Text, Title} = Typography;
 const {confirm} = Modal;
+const db = firebase.firestore();
 
 const AddProduct = ({setClient, addProductToCart}) => {
   const [SKU, setSKU] = useState(undefined);
   const [cellphone, setCellphone] = useState(undefined);
 
   const getClient = () => {
-    // Fetch client info and use setClient to set its info.
-    const db = firebase.firestore();
     db.collection('Clientes')
       .where('phone', '==', cellphone)
       .onSnapshot(function (querySnapshot) {
-        let info;
+        let clientToSet;
         querySnapshot.forEach(function (doc) {
-          info = doc.data();
+          clientToSet = doc.data();
         });
-        if (info === undefined) {
-          // eslint-disable-next-line no-console
-          console.log('open pop up');
+        if (!clientToSet) {
+          message.error(`El número ${cellphone} no está registrado!`);
         } else {
-          setClient(info);
+          message.success(`Bienvenido ${clientToSet.firstName}!`);
+          setClient(clientToSet);
         }
       });
     setCellphone(undefined);
   };
 
   const addProductWithSKU = () => {
-    // Fetch product with SKU and add it to cart.
-    const db = firebase.firestore();
     db.collection('Productos')
       .where('SKU', '==', SKU)
       .onSnapshot(function (querySnapshot) {
-        let info;
+        let productToSet;
         querySnapshot.forEach(function (doc) {
-          info = doc.data();
+          productToSet = doc.data();
         });
-        if (info === undefined) {
-          // eslint-disable-next-line no-console
-          console.log('Error Message, no product with that sku');
+        if (!productToSet) {
+          message.error(`No existe ningún producto con el SKU ${SKU}`);
         } else {
-          addProductToCart(info);
+          message.success(`Producto ${SKU} agregado exitosamente!`);
+          addProductToCart(productToSet);
         }
       });
     setSKU(undefined);
@@ -78,7 +73,7 @@ const AddProduct = ({setClient, addProductToCart}) => {
         />
         <Button
           type="primary"
-          icon={<PlusOutlined style={{color: '#FFFFFF'}} />}
+          icon={<LoginOutlined style={{color: '#FFFFFF'}} />}
           onClick={getClient}
           disabled={!cellphone}
         />
@@ -88,6 +83,7 @@ const AddProduct = ({setClient, addProductToCart}) => {
           style={{width: '80%'}}
           prefix={<NumberOutlined />}
           placeholder="SKU"
+          value={SKU}
           onChange={({target: {value}}) => setSKU(value)}
         />
         <Button
@@ -110,35 +106,19 @@ const CheckoutCart = ({
   modifyProductUnits,
   addProductToCart,
 }) => {
+  const [payment, setPayment] = useState({
+    cash: 0,
+    card: 0,
+    coupon: 0,
+    debt: 0,
+  });
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [payment, setPayment] = useState({cash: 0, card: 0, coupon: 0});
-  const [balance, setBalance] = useState(cartSummary.total || 0);
-
-  useEffect(() => {
-    setBalance(fixDecimals(payment.cash + payment.card + payment.coupon));
-  }, [payment, cartSummary]);
 
   const resetCheckout = () => {
     setCart([]);
     setClient({debt: 0});
     setShowPaymentModal(false);
-    setPayment({cash: 0, card: 0, coupon: 0});
-  };
-
-  const submitPayment = () => {
-    confirm({
-      title: `¿Estás seguro de que deseas finalizar la compra?`,
-      content: 'Una vez finalizada ya no será posible modificarla.',
-      okType: 'danger',
-      okText: 'Continuar',
-      cancelText: 'Cancelar',
-      onOk: async () => {
-        // Register transaction...
-        createOrder(cartSummary, cart, client);
-        resetCheckout();
-      },
-      onCancel: () => {},
-    });
+    setPayment({cash: 0, card: 0, coupon: 0, debt: 0});
   };
 
   const deleteCart = () => {
@@ -151,8 +131,6 @@ const CheckoutCart = ({
       onCancel: () => {},
     });
   };
-
-  const balanceToDisplay = balance < 0 ? `(${Math.abs(balance)})` : balance;
 
   return (
     <Card
@@ -211,10 +189,6 @@ const CheckoutCart = ({
         />
         <Card>
           <RowContainer>
-            <Title level={5}>Subtotal</Title>
-            <Text>{`$${cartSummary.subtotal}`}</Text>
-          </RowContainer>
-          <RowContainer>
             <Title level={5}>Deuda</Title>
             <Text>
               {client.debt >= 0
@@ -227,41 +201,16 @@ const CheckoutCart = ({
             <Text>{`$${cartSummary.discounts}`}</Text>
           </RowContainer>
           <RowContainer>
-            <Title level={5}>I.V.A</Title>
-            <Text>{`$${cartSummary.tax}`}</Text>
-          </RowContainer>
-          <RowContainer>
             <Title level={4}>Total</Title>
             <Text strong>{`$${cartSummary.total}`}</Text>
-          </RowContainer>
-          <RowContainer>
-            <Text disabled>Pagado</Text>
-            <Text strong>{`$${balanceToDisplay}`}</Text>
-          </RowContainer>
-          <RowContainer>
-            <Text disabled>Cambio</Text>
-            <Text strong>{`$${
-              balanceToDisplay > cartSummary.total
-                ? fixDecimals(balanceToDisplay - cartSummary.total)
-                : 0
-            }`}</Text>
           </RowContainer>
           <Button
             type="secondary"
             block
-            style={{margin: '5px 0px'}}
             disabled={cartSummary.total === 0}
             onClick={() => setShowPaymentModal(true)}
           >
-            Realizar pago
-          </Button>
-          <Button
-            type="primary"
-            block
-            style={{margin: '5px 0px'}}
-            onClick={submitPayment}
-          >
-            Finalizar compra
+            Proceder al pago
           </Button>
         </Card>
       </CheckoutCartContainer>
@@ -270,16 +219,13 @@ const CheckoutCart = ({
         setShowPaymentModal={setShowPaymentModal}
         payment={payment}
         setPayment={setPayment}
+        cart={cart}
+        client={client}
+        resetCheckout={resetCheckout}
+        cartSummary={cartSummary}
       />
     </Card>
   );
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    createOrder: (summary, cart, client) =>
-      dispatch(createOrder(summary, cart, client)),
-  };
 };
 
 AddProduct.propTypes = {
@@ -297,4 +243,4 @@ CheckoutCart.propTypes = {
   addProductToCart: PropTypes.func.isRequired,
 };
 
-export default connect(null, mapDispatchToProps)(CheckoutCart);
+export default CheckoutCart;

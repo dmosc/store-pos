@@ -4,7 +4,8 @@
     "baseUrl": "src",
     "paths": {
       "config/*": ["./src/config"],
-      "client/*": ["./src/client"]
+      "client/*": ["./src/client"],
+      "redux/*": ["./src/redux"]
     }
   }
 }
