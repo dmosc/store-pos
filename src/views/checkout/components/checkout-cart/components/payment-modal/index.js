@@ -3,6 +3,7 @@ import {Button, Input, InputNumber, List, Modal, Typography} from 'antd';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {
+  ModalFooter,
   PaymentMethodContainer,
   PaymentMethodList,
   PaymentModalFooter,
@@ -82,6 +83,7 @@ const PaymentModal = ({
 
   return (
     <Modal
+      width="fit-content"
       title={
         <div
           style={{display: 'flex', flexDirection: 'column', marginBottom: 0}}
@@ -98,57 +100,63 @@ const PaymentModal = ({
         setShowPaymentModal(false);
       }}
       footer={
-        <PaymentModalFooter>
-          {paymentMethod &&
-            paymentMethod === PAYMENT_TYPES.debt &&
-            addPayment()}
-          {paymentMethod &&
-            (paymentMethod === PAYMENT_TYPES.cash ||
-              paymentMethod === PAYMENT_TYPES.card) && (
-              <InputNumber
-                step={0.1}
+        <ModalFooter>
+          <Text
+            disabled
+          >{`Efectivo: $${payment.cash} Tarjeta: $${payment.card} Cupón: $${payment.coupon} Deuda: $${payment.debt}`}</Text>
+          <PaymentModalFooter>
+            {paymentMethod &&
+              paymentMethod === PAYMENT_TYPES.debt &&
+              addPayment()}
+            {paymentMethod &&
+              (paymentMethod === PAYMENT_TYPES.cash ||
+                paymentMethod === PAYMENT_TYPES.card) && (
+                <InputNumber
+                  step={0.1}
+                  style={{width: '50%'}}
+                  formatter={(value) =>
+                    `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                  }
+                  parser={(value) => value.replace(/\$\s?|[a-zA-Z]|(,*)/g, '')}
+                  onChange={(value) => setPaymentContent(value)}
+                />
+              )}
+            {paymentMethod && paymentMethod === PAYMENT_TYPES.coupon && (
+              <Input
                 style={{width: '50%'}}
-                formatter={(value) =>
-                  `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                }
-                parser={(value) => value.replace(/\$\s?|[a-zA-Z]|(,*)/g, '')}
+                placeholder="Ingresar código del cupón"
                 onChange={(value) => setPaymentContent(value)}
               />
             )}
-          {paymentMethod && paymentMethod === PAYMENT_TYPES.coupon && (
-            <Input
-              style={{width: '50%'}}
-              placeholder="Ingresar código del cupón"
-              onChange={(value) => setPaymentContent(value)}
-            />
-          )}
-          <div>
-            {balance <= 0 && (
-              <Button type="primary" onClick={submitPayment}>
-                Finalizar
-              </Button>
-            )}
-            {balance > 0 && (
-              <>
-                <Button
-                  onClick={() => {
-                    setPaymentMethod(undefined);
-                    setShowPaymentModal(false);
-                  }}
-                >
-                  Cancelar
+            <div>
+              {balance <= 0 && (
+                <Button type="primary" onClick={submitPayment}>
+                  Finalizar
                 </Button>
-                <Button disabled={!paymentMethod} onClick={addPayment}>
-                  Continuar
-                </Button>
-              </>
-            )}
-          </div>
-        </PaymentModalFooter>
+              )}
+              {balance > 0 && (
+                <>
+                  <Button
+                    onClick={() => {
+                      setPaymentMethod(undefined);
+                      setShowPaymentModal(false);
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button disabled={!paymentMethod} onClick={addPayment}>
+                    Continuar
+                  </Button>
+                </>
+              )}
+            </div>
+          </PaymentModalFooter>
+        </ModalFooter>
       }
     >
       <PaymentMethodList
         size="small"
+        style={{width: '70vh'}}
         dataSource={PAYMENT_METHODS}
         renderItem={(method) => (
           <List.Item>

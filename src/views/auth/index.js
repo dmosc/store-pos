@@ -4,7 +4,7 @@ import Loadable from 'react-loadable';
 import TopBarProgress from 'react-topbar-progress-indicator';
 
 const Login = Loadable({
-  loader: () => import('./login'),
+  loader: () => import('./components/login'),
   loading: TopBarProgress,
 });
 

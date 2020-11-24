@@ -1,5 +1,14 @@
 import React, {useState} from 'react';
-import {Button, Card, Input, List, message, Modal, Typography} from 'antd';
+import {
+  Button,
+  Card,
+  Input,
+  List,
+  message,
+  Modal,
+  Tooltip,
+  Typography,
+} from 'antd';
 import {
   DeleteOutlined,
   LoginOutlined,
@@ -67,13 +76,18 @@ const AddProduct = ({setClient, addProductToCart}) => {
   return (
     <>
       <AddProductContainer>
-        <Input
-          style={{width: '80%', marginBottom: 5}}
-          prefix={<PhoneOutlined />}
-          value={cellphone}
-          placeholder="Celular del cliente"
-          onChange={({target: {value}}) => setCellphone(value)}
-        />
+        <Tooltip
+          title="Verificar cliente con celular o inicar registro"
+          trigger="focus"
+        >
+          <Input
+            style={{width: '80%', marginBottom: 5}}
+            prefix={<PhoneOutlined />}
+            value={cellphone}
+            placeholder="Celular del cliente"
+            onChange={({target: {value}}) => setCellphone(value)}
+          />
+        </Tooltip>
         <Button
           type="primary"
           icon={<LoginOutlined style={{color: '#FFFFFF'}} />}
