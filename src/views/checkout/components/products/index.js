@@ -15,19 +15,27 @@ const Products = ({products, addProductToCart, filters}) => {
             filters.category === 'Todo' ||
             product.categories.includes(filters.category)
           ) {
-            return (
-              <Card key={product.id} onClick={() => addProductToCart(product)}>
-                <Meta
-                  title={
-                    <div>
-                      <ProductName ellipsis>{product.name}</ProductName>
-                      <Text>{`$${product.price}`}</Text>
-                    </div>
-                  }
-                  description={`SKU: ${product.SKU}`}
-                />
-              </Card>
-            );
+            if (
+              product.name.toUpperCase().includes(filters.search.toUpperCase())
+            ) {
+              return (
+                <Card
+                  key={product.id}
+                  onClick={() => addProductToCart(product)}
+                >
+                  <Meta
+                    title={
+                      <div>
+                        <ProductName ellipsis>{product.name}</ProductName>
+                        <Text>{`$${product.price}`}</Text>
+                      </div>
+                    }
+                    description={`SKU: ${product.SKU}`}
+                  />
+                </Card>
+              );
+            }
+            return undefined;
           }
 
           return undefined;
