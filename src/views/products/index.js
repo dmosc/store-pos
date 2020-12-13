@@ -5,12 +5,12 @@ import {firestoreConnect} from 'react-redux-firebase';
 import {compose} from 'redux';
 import PropTypes from 'prop-types';
 import {buildBreadcrumb} from 'utils/functions';
-import {EditOutlined} from '@ant-design/icons';
+import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {Button, Card, Col, Row, Table, Tag, Tooltip, Typography} from 'antd';
-import TitleTable from './table-title';
+import TitleTable from './components/table-title';
 import {Container} from './elements';
 import {useLocation} from 'react-router-dom';
-import ProductModal from './components/newProductModal';
+import ProductModal from './components/new-product-modal';
 
 const {Title} = Typography;
 
@@ -52,16 +52,31 @@ const Products = ({products}) => {
       title: 'Precio',
       dataIndex: 'price',
       key: 'price',
+      render: (price) => `$${price}`,
     },
     {
       title: 'Acciones',
-      key: 'action',
-      // eslint-disable-next-line react/prop-types
-      // eslint-disable-next-line react/display-name
+      key: 'actions',
+      align: 'left',
       render: () => (
-        <Tooltip title="Editar usuario">
-          <Button shape="circle" icon={<EditOutlined />} />
-        </Tooltip>
+        <Row>
+          <Tooltip placement="top" title="Editar">
+            <Button
+              type="secondary"
+              icon={<EditOutlined />}
+              size="small"
+              style={{marginRight: 5}}
+            />
+          </Tooltip>
+          <Tooltip placement="top" title="Editar">
+            <Button
+              type="danger"
+              icon={<DeleteOutlined style={{color: '#FFFFFF'}} />}
+              size="small"
+              style={{marginRight: 5}}
+            />
+          </Tooltip>
+        </Row>
       ),
     },
   ];
@@ -71,7 +86,11 @@ const Products = ({products}) => {
         {buildBreadcrumb(['menu', location.pathname.substring(1)])}
         <Card>
           <Table
-            scroll={{y: 340}}
+            size="small"
+            scroll={{y: 390}}
+            pagination={{
+              defaultPageSize: 9,
+            }}
             title={() => (
               <TitleTable
                 search={search}
@@ -80,7 +99,7 @@ const Products = ({products}) => {
               />
             )}
             dataSource={products.map((product) => ({
-              key: products.id,
+              key: product.SKU,
               ...product,
             }))}
             columns={columns}
@@ -126,7 +145,7 @@ const mapStateToProps = (state) => {
 
 export default compose(
   connect(mapStateToProps),
-  firestoreConnect((props) => {
+  firestoreConnect(() => {
     // if (props.profile.userID === undefined) return [];
 
     return [

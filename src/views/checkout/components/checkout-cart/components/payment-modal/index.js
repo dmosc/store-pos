@@ -88,10 +88,13 @@ const PaymentModal = ({
         <div
           style={{display: 'flex', flexDirection: 'column', marginBottom: 0}}
         >
+          <Text disabled>{`Último pago: `}</Text>
+          <Text
+            disabled
+          >{`Efectivo: $${payment.cash} Tarjeta: $${payment.card} Cupón: $${payment.coupon} Deuda: $${payment.debt}`}</Text>
           <Text strong>{`${
             balanceToDisplay >= 0 ? 'Pendiente' : 'Cambio'
           }: $${balanceToDisplay}`}</Text>
-          <Text disabled>{`Último pago: `}</Text>
         </div>
       }
       visible={showPaymentModal}
@@ -101,9 +104,6 @@ const PaymentModal = ({
       }}
       footer={
         <ModalFooter>
-          <Text
-            disabled
-          >{`Efectivo: $${payment.cash} Tarjeta: $${payment.card} Cupón: $${payment.coupon} Deuda: $${payment.debt}`}</Text>
           <PaymentModalFooter>
             {paymentMethod &&
               paymentMethod === PAYMENT_TYPES.debt &&

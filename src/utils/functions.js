@@ -1,5 +1,6 @@
 import {
-  BarsOutlined,
+  BarcodeOutlined,
+  CodeSandboxOutlined,
   HomeOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons';
@@ -28,17 +29,24 @@ const paths = new Map([
     </>,
   ],
   [
-    'distributors',
+    'productos',
     <>
-      <BarsOutlined />
-      <Link to="/distributors">Distribuidores</Link>
+      <CodeSandboxOutlined />
+      <Link to="/distributors">Productos</Link>
+    </>,
+  ],
+  [
+    'ordenes',
+    <>
+      <BarcodeOutlined />
+      <Link to="/distributors">Órdenes</Link>
     </>,
   ],
 ]);
 
 const buildBreadcrumb = (locations) => {
   return (
-    <Breadcrumb>
+    <Breadcrumb style={{marginBottom: 5}}>
       {locations.map((location) => {
         if (paths.has(location)) {
           return (
@@ -47,7 +55,6 @@ const buildBreadcrumb = (locations) => {
             </Breadcrumb.Item>
           );
         }
-
         return undefined;
       })}
     </Breadcrumb>

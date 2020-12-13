@@ -2,7 +2,6 @@ import React from 'react';
 import firebase from 'firebase';
 import {Button, Form, Input, Modal} from 'antd';
 import PropTypes from 'prop-types';
-import {PlusOutlined} from '@ant-design/icons';
 
 const ClientRegisterModal = ({showProductModal, setShowProductModal}) => {
   const [form] = Form.useForm();
@@ -42,7 +41,7 @@ const ClientRegisterModal = ({showProductModal, setShowProductModal}) => {
           <Input />
         </Form.Item>
         <Form.Item
-          label="Nombre de Producto"
+          label="Nombre"
           name="name"
           rules={[{required: true, message: 'Ingrese nombre de producto'}]}
         >
@@ -56,19 +55,16 @@ const ClientRegisterModal = ({showProductModal, setShowProductModal}) => {
           <Input />
         </Form.Item>
         <Form.Item
-          label="Categoria"
+          label="Categoría"
           name="category"
           rules={[{required: true, message: 'Ingrese categoria del prodcuto'}]}
         >
           <Input />
         </Form.Item>
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            icon={<PlusOutlined style={{color: '#FFFFFF'}} />}
-          ></Button>
+          <Button type="primary" htmlType="submit" block>
+            Registrar
+          </Button>
         </Form.Item>
       </Form>
     </Modal>

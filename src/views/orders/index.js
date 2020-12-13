@@ -7,7 +7,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import {buildBreadcrumb} from 'utils/functions';
 import {Card, Col, Row, Table, Tag, Typography} from 'antd';
-import TitleTable from './table-title';
+import TitleTable from './components/table-title';
 import {Container} from './elements';
 import {useLocation} from 'react-router-dom';
 
@@ -60,7 +60,11 @@ const Orders = ({orders}) => {
         {buildBreadcrumb(['menu', location.pathname.substring(1)])}
         <Card>
           <Table
-            scroll={{y: 340}}
+            size="small"
+            scroll={{y: 390}}
+            pagination={{
+              defaultPageSize: 9,
+            }}
             title={() => <TitleTable search={search} setSearch={setSearch} />}
             dataSource={orders.map((order) => ({
               key: order.id,
@@ -105,7 +109,7 @@ const mapStateToProps = (state) => {
 
 export default compose(
   connect(mapStateToProps),
-  firestoreConnect((props) => {
+  firestoreConnect(() => {
     // if (props.profile.userID === undefined) return [];
 
     return [

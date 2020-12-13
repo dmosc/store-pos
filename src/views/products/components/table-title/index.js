@@ -10,19 +10,18 @@ const {Search} = Input;
 const TableTitle = ({search, setSearch, setShowProductModal}) => {
   return (
     <TitleContainer>
-      <Title style={{margin: 'auto 10px'}} level={3}>
-        Productos
-      </Title>
+      <Title level={3}>Productos</Title>
       <Search
         style={{width: 250, margin: 'auto 10px auto auto'}}
         allowClear
         value={search}
-        placeholder="Buscar Prodructo"
+        placeholder="Buscar productos"
         onChange={({target: {value}}) => setSearch(value)}
       />
       <Button
         type="primary"
-        icon={<PlusOutlined />}
+        style={{margin: 'auto 0px'}}
+        icon={<PlusOutlined style={{color: '#FFFFFF'}} />}
         onClick={() => setShowProductModal(true)}
       >
         Producto

@@ -2,8 +2,7 @@ import styled from 'styled-components';
 
 const TitleContainer = styled.div`
   display: flex;
-  align-items: center;
-  padding: 10px;
+  justify-content: space-between;
 `;
 
 export {TitleContainer};
