@@ -1,19 +1,27 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import firebase from 'firebase';
-import {Button, Form, Input, Modal} from 'antd';
+import {Button, Form, Input, Modal, Select} from 'antd';
 import PropTypes from 'prop-types';
 
 const ClientRegisterModal = ({showProductModal, setShowProductModal}) => {
   const [form] = Form.useForm();
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    // Fetch categories.
+    const mockCategories = ['Bufandas', 'Zapatos', 'Guisos'];
+    setCategories(mockCategories);
+  }, []);
 
   const addProduct = (info) => {
     const db = firebase.firestore();
+
     db.collection('Productos')
       .doc()
       .set({
         SKU: info.SKU,
         name: info.name,
-        categories: [info.category],
+        categories: [info.category[0]],
         price: info.price,
         companyID: 'prueba',
         inventory: 100,
@@ -57,9 +65,13 @@ const ClientRegisterModal = ({showProductModal, setShowProductModal}) => {
         <Form.Item
           label="Categoría"
           name="category"
-          rules={[{required: true, message: 'Ingrese categoria del prodcuto'}]}
+          rules={[{required: true, message: 'Ingrese categoria del producto'}]}
         >
-          <Input />
+          <Select mode="tags" style={{width: '100%'}}>
+            {categories.map((category) => (
+              <Select.Option key={category}>{category}</Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" block>

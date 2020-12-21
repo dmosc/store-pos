@@ -79,8 +79,10 @@ const Checkout = ({products}) => {
     const cartToSet = [];
     for (const {product, units} of cart) {
       if (product.id === productId) {
-        if (units + amount > 0)
-          cartToSet.push({product, units: units + amount});
+        if (units + amount > 0) {
+          if (amount > 1) cartToSet.push({product, units: amount});
+          else cartToSet.push({product, units: units + amount});
+        }
       } else {
         cartToSet.push({product, units});
       }

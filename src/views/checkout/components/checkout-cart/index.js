@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {
   Button,
   Card,
+  Form,
   Input,
   List,
   message,
@@ -26,6 +27,7 @@ import PaymentModal from './components/payment-modal';
 import firebase from 'firebase';
 import PropTypes from 'prop-types';
 import ClientRegisterModal from './components/client-register-modal';
+import ProductQuantityModal from './components/product-quantity-modal';
 
 const {Text, Title} = Typography;
 const {confirm} = Modal;
@@ -96,19 +98,25 @@ const AddProduct = ({setClient, addProductToCart}) => {
         />
       </AddProductContainer>
       <AddProductContainer>
-        <Input
-          style={{width: '80%'}}
-          prefix={<NumberOutlined />}
-          placeholder="SKU"
-          value={SKU}
-          onChange={({target: {value}}) => setSKU(value)}
-        />
-        <Button
-          type="primary"
-          icon={<PlusOutlined style={{color: '#FFFFFF'}} />}
-          onClick={addProductWithSKU}
-          disabled={!SKU}
-        />
+        <Form onFinish={addProductWithSKU} layout="inline">
+          <Form.Item>
+            <Input
+              prefix={<NumberOutlined />}
+              placeholder="SKU"
+              name="SKU"
+              value={SKU}
+              onChange={({target: {value}}) => setSKU(value)}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              icon={<PlusOutlined style={{color: '#FFFFFF'}} />}
+              onClick={addProductWithSKU}
+              disabled={!SKU}
+            />
+          </Form.Item>
+        </Form>
       </AddProductContainer>
       <ClientRegisterModal
         showClientRegisterModal={showClientRegisterModal}
@@ -137,6 +145,7 @@ const CheckoutCart = ({
     debt: 0,
   });
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState(undefined);
 
   const resetCheckout = () => {
     setCart([]);
@@ -187,6 +196,12 @@ const CheckoutCart = ({
                   type="danger"
                   icon={<MinusOutlined style={{color: '#FFFFFF'}} />}
                   onClick={() => modifyProductUnits(product.id, -1)}
+                />,
+                <Button
+                  key={1}
+                  type="secondary"
+                  icon={<NumberOutlined />}
+                  onClick={() => setCurrentProduct(product)}
                 />,
                 <Button
                   key={1}
@@ -246,6 +261,11 @@ const CheckoutCart = ({
         client={client}
         resetCheckout={resetCheckout}
         cartSummary={cartSummary}
+      />
+      <ProductQuantityModal
+        currentProduct={currentProduct}
+        setCurrentProduct={setCurrentProduct}
+        modifyProductUnits={modifyProductUnits}
       />
     </Card>
   );

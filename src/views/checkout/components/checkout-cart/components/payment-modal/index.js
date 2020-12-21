@@ -55,28 +55,18 @@ const PaymentModal = ({
   };
 
   const addPayment = () => {
-    confirm({
-      title: `¿Estás seguro de agergar el pago?`,
-      content: 'Una vez agregado, ya no podrá removerse.',
-      okType: 'danger',
-      okText: 'Continuar',
-      cancelText: 'Cancelar',
-      onOk: async () => {
-        let paymentContentToSet = paymentContent;
-        if (paymentMethod === PAYMENT_TYPES.coupon) {
-          // Validate coupon and fetch its monetary value.
-          // paymentContent contains the introduced coupon.
-          const coupon = {...couponMock};
-          paymentContentToSet = coupon.value;
-        } else if (paymentMethod === PAYMENT_TYPES.debt) {
-          paymentContentToSet = balance;
-        }
+    let paymentContentToSet = paymentContent;
+    if (paymentMethod === PAYMENT_TYPES.coupon) {
+      // Validate coupon and fetch its monetary value.
+      // paymentContent contains the introduced coupon.
+      const coupon = {...couponMock};
+      paymentContentToSet = coupon.value;
+    } else if (paymentMethod === PAYMENT_TYPES.debt) {
+      paymentContentToSet = balance;
+    }
 
-        setPaymentMethod(undefined);
-        setPayment({...payment, [paymentMethod]: paymentContentToSet});
-      },
-      onCancel: () => {},
-    });
+    setPaymentMethod(undefined);
+    setPayment({...payment, [paymentMethod]: paymentContentToSet});
   };
 
   const balanceToDisplay = balance < 0 ? `(${Math.abs(balance)})` : balance;
@@ -89,12 +79,7 @@ const PaymentModal = ({
           style={{display: 'flex', flexDirection: 'column', marginBottom: 0}}
         >
           <Text disabled>{`Último pago: `}</Text>
-          <Text
-            disabled
-          >{`Efectivo: $${payment.cash} Tarjeta: $${payment.card} Cupón: $${payment.coupon} Deuda: $${payment.debt}`}</Text>
-          <Text strong>{`${
-            balanceToDisplay >= 0 ? 'Pendiente' : 'Cambio'
-          }: $${balanceToDisplay}`}</Text>
+          <Text strong>{`Total: $${cartSummary.total}`}</Text>
         </div>
       }
       visible={showPaymentModal}
@@ -104,6 +89,21 @@ const PaymentModal = ({
       }}
       footer={
         <ModalFooter>
+          {payment.cash !== 0 && (
+            <Text disabled>{`Efectivo: $${payment.cash}`}</Text>
+          )}
+          {payment.card !== 0 && (
+            <Text disabled>{`Tarjeta: $${payment.card}`}</Text>
+          )}
+          {payment.coupon !== 0 && (
+            <Text disabled>{`Cupón: $${payment.coupon}`}</Text>
+          )}
+          {payment.debt !== 0 && (
+            <Text disabled>{`Deuda: $${payment.debt}`}</Text>
+          )}
+          <Text strong>{`${
+            balanceToDisplay >= 0 ? 'Pendiente' : 'Cambio'
+          }: $${balanceToDisplay}`}</Text>
           <PaymentModalFooter>
             {paymentMethod &&
               paymentMethod === PAYMENT_TYPES.debt &&
@@ -157,7 +157,10 @@ const PaymentModal = ({
       <PaymentMethodList
         size="small"
         style={{width: '70vh'}}
-        dataSource={PAYMENT_METHODS}
+        dataSource={PAYMENT_METHODS.filter((method) => {
+          if (!client.firstName) return method.type !== 'debt';
+          return true;
+        })}
         renderItem={(method) => (
           <List.Item>
             <PaymentMethodContainer
