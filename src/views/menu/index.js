@@ -1,9 +1,10 @@
 import React from 'react';
 import {ModuleContainer, ModulesList} from './elements';
 import {
-  ShoppingCartOutlined,
   BarcodeOutlined,
   CodeSandboxOutlined,
+  HourglassOutlined,
+  ShoppingCartOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
 import {Link} from 'react-router-dom';
@@ -70,6 +71,20 @@ const modules = [
     route: '/usuarios',
     icon: (
       <TeamOutlined
+        style={{
+          width: '100%',
+          color: '#097A6C',
+          fontSize: 'xxx-large',
+          marginBottom: 10,
+        }}
+      />
+    ),
+  },
+  {
+    name: 'Turnos',
+    route: '/turnos',
+    icon: (
+      <HourglassOutlined
         style={{
           width: '100%',
           color: '#097A6C',

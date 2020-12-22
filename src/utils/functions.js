@@ -2,6 +2,7 @@ import {
   BarcodeOutlined,
   CodeSandboxOutlined,
   HomeOutlined,
+  HourglassOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons';
 import {Link} from 'react-router-dom';
@@ -40,6 +41,13 @@ const paths = new Map([
     <>
       <BarcodeOutlined />
       <Link to="/distributors">Órdenes</Link>
+    </>,
+  ],
+  [
+    'turnos',
+    <>
+      <HourglassOutlined />
+      <Link to="/distributors">Turnos</Link>
     </>,
   ],
 ]);

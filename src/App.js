@@ -24,13 +24,18 @@ const Distributors = Loadable({
   loading: TopBarProgress,
 });
 
-const Productos = Loadable({
+const Products = Loadable({
   loader: () => import('./views/products'),
   loading: TopBarProgress,
 });
 
-const Ordenes = Loadable({
+const Orders = Loadable({
   loader: () => import('./views/orders'),
+  loading: TopBarProgress,
+});
+
+const Turns = Loadable({
+  loader: () => import('./views/turns'),
   loading: TopBarProgress,
 });
 
@@ -53,9 +58,10 @@ const App = () => {
     <Switch>
       <Route exact path="/" component={Menu} />
       <Route exact path="/checkout" component={Checkout} />
-      <Route exact path="/productos" component={Productos} />
-      <Route exact path="/ordenes" component={Ordenes} />
+      <Route exact path="/productos" component={Products} />
+      <Route exact path="/ordenes" component={Orders} />
       <Route exact path="/distribuidores" component={Distributors} />
+      <Route exact path="/turnos" component={Turns} />
       <Redirect to="/" />
     </Switch>
   );

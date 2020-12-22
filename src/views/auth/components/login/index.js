@@ -53,7 +53,7 @@ const Login = () => {
             type="primary"
             htmlType="submit"
             icon={<LoginOutlined style={{color: '#FFFFFF'}} />}
-          ></Button>
+          />
         </Form.Item>
         <div style={{color: 'red', textAlign: 'center'}}>{error}</div>
       </Form>
