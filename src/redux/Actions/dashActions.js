@@ -10,7 +10,7 @@ export const createOrder = (summary, cart, client) => {
         cart,
         subtotal: summary.subtotal,
         total: summary.total,
-        tax: summary.tax,
+        // tax: summary.tax,
         discounts: summary.discounts,
         client: client.email ? client.email : 'General',
         companyID: 'prueba',

@@ -33,12 +33,18 @@ const ProductQuantityModal = ({
             autoFocus
             label="Unidades"
             style={{width: '75%'}}
+            min={0}
             placeholder="Ingrese unidades del producto"
           />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" block>
             Modificar
+          </Button>
+        </Form.Item>
+        <Form.Item>
+          <Button type="danger" block onClick={() => onFinish({units: 0})}>
+            Eliminar
           </Button>
         </Form.Item>
       </Form>

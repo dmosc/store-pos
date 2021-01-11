@@ -9,21 +9,19 @@ import {categoriesList} from './demo-data';
 import Filters from './components/filters';
 import Products from './components/products';
 import CheckoutCart from './components/checkout-cart';
-import {TAX} from 'utils/constants';
 import {buildBreadcrumb, fixDecimals} from 'utils/functions';
 import {useLocation} from 'react-router-dom';
 
 const {Title} = Typography;
 
 const Checkout = ({products}) => {
-  // const [products, setProducts] = useState([]);
+  const [useDebt, setUseDebt] = useState(true);
   const [categories, setCategories] = useState([]);
   const [client, setClient] = useState({debt: 0});
   const [cart, setCart] = useState([]);
   const [cartSummary, setCartSummary] = useState({
     subtotal: 0,
     discounts: 0,
-    tax: 0,
     total: 0,
   });
   const [filters, setFilters] = useState({search: '', category: 'Todo'});
@@ -55,11 +53,11 @@ const Checkout = ({products}) => {
 
     subtotal = fixDecimals(subtotal);
     discounts = fixDecimals(discounts);
-    const tax = fixDecimals((subtotal - discounts) * TAX);
-    const total = fixDecimals(subtotal - discounts + tax + client.debt);
+    const debt = useDebt ? client.debt : 0;
+    const total = fixDecimals(subtotal - discounts + debt);
 
-    setCartSummary({subtotal, discounts, tax, total});
-  }, [cart, client]);
+    setCartSummary({subtotal, discounts, total});
+  }, [cart, client, useDebt]);
 
   const addProductToCart = (productToSet) => {
     let cartToSet;
@@ -79,10 +77,7 @@ const Checkout = ({products}) => {
     const cartToSet = [];
     for (const {product, units} of cart) {
       if (product.id === productId) {
-        if (units + amount > 0) {
-          if (amount > 1) cartToSet.push({product, units: amount});
-          else cartToSet.push({product, units: units + amount});
-        }
+        if (amount !== 0) cartToSet.push({product, units: amount});
       } else {
         cartToSet.push({product, units});
       }
@@ -135,8 +130,10 @@ const Checkout = ({products}) => {
           cartSummary={cartSummary}
           setCart={setCart}
           client={client}
+          useDebt={useDebt}
           addProductToCart={addProductToCart}
           setClient={setClient}
+          setUseDebt={setUseDebt}
           modifyProductUnits={modifyProductUnits}
         />
       </Col>

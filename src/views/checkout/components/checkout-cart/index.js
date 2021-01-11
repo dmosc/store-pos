@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {
   Button,
   Card,
+  Checkbox,
   Form,
   Input,
   List,
@@ -14,7 +15,7 @@ import {
   DeleteOutlined,
   LoginOutlined,
   MinusOutlined,
-  NumberOutlined,
+  EditOutlined,
   PhoneOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
@@ -101,7 +102,7 @@ const AddProduct = ({setClient, addProductToCart}) => {
         <Form onFinish={addProductWithSKU} layout="inline">
           <Form.Item>
             <Input
-              prefix={<NumberOutlined />}
+              prefix={<EditOutlined />}
               placeholder="SKU"
               name="SKU"
               value={SKU}
@@ -134,7 +135,9 @@ const CheckoutCart = ({
   cartSummary,
   setCart,
   client,
+  useDebt,
   setClient,
+  setUseDebt,
   modifyProductUnits,
   addProductToCart,
 }) => {
@@ -151,6 +154,7 @@ const CheckoutCart = ({
     setCart([]);
     setClient({debt: 0});
     setShowPaymentModal(false);
+    setUseDebt(true);
     setPayment({cash: 0, card: 0, coupon: 0, debt: 0});
   };
 
@@ -195,19 +199,19 @@ const CheckoutCart = ({
                   key={1}
                   type="danger"
                   icon={<MinusOutlined style={{color: '#FFFFFF'}} />}
-                  onClick={() => modifyProductUnits(product.id, -1)}
+                  onClick={() => modifyProductUnits(product.id, units - 1)}
                 />,
                 <Button
                   key={1}
                   type="secondary"
-                  icon={<NumberOutlined />}
+                  icon={<EditOutlined />}
                   onClick={() => setCurrentProduct(product)}
                 />,
                 <Button
                   key={1}
                   type="primary"
                   icon={<PlusOutlined style={{color: '#FFFFFF'}} />}
-                  onClick={() => modifyProductUnits(product.id, 1)}
+                  onClick={() => modifyProductUnits(product.id, units + 1)}
                 />,
               ]}
             >
@@ -241,6 +245,11 @@ const CheckoutCart = ({
           <RowContainer>
             <Title level={4}>Total</Title>
             <Text strong>{`$${cartSummary.total}`}</Text>
+          </RowContainer>
+          <RowContainer>
+            <Checkbox checked={!useDebt} onChange={() => setUseDebt(!useDebt)}>
+              Ignorar deuda
+            </Checkbox>
           </RowContainer>
           <Button
             type="secondary"
